@@ -32,7 +32,10 @@ class RequestId(base.Middleware):
 
     @webob.dec.wsgify
     def __call__(self, req):
-        req_id = context.generate_request_id()
+	if "HTTP_REQUEST_ID" in req.environ and req.environ["HTTP_REQUEST_ID"] !=None:
+	   req_id = req.environ["HTTP_REQUEST_ID"]
+	else:
+	   req_id = context.generate_request_id()
         req.environ[ENV_REQUEST_ID] = req_id
         response = req.get_response(self.application)
         if HTTP_RESP_HEADER_REQUEST_ID not in response.headers:
